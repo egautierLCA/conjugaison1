@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exercice Gaffiot P3</title>
+<style>
+  :root {
+    --bg: #f7f8fb; --surface: #ffffff; --text: #1d2433; --muted: #5a6478;
+    --accent: #2f5aa8; --accent-text: #ffffff; --border: #d5dae3; --head: #e3eaf6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14171d; --surface: #1d2129; --text: #e6e9ef; --muted: #a2abbb;
+      --accent: #7ea6ef; --accent-text: #0f1420; --border: #353b47; --head: #263049;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14171d; --surface: #1d2129; --text: #e6e9ef; --muted: #a2abbb;
+    --accent: #7ea6ef; --accent-text: #0f1420; --border: #353b47; --head: #263049;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: Arial, Helvetica, "Segoe UI", system-ui, sans-serif; line-height: 1.5;
+  }
+  main { max-width: 960px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 20px; }
+  .search { position: sticky; top: 0; z-index: 2; }
+  .search form { display: flex; gap: 8px; flex-wrap: wrap; }
+  .search input { flex: 1 1 200px; font: inherit; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); }
+  .search button { font: inherit; font-weight: bold; padding: 10px 16px; border: 0; border-radius: 8px; background: var(--accent); color: var(--accent-text); cursor: pointer; }
+  .search p { margin: 8px 0 0; font-size: .9rem; color: var(--muted); }
+  ul { margin: 8px 0 0; padding-left: 20px; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 640px; }
+  th, td { border: 1px solid var(--border); padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: var(--head); font-size: .9rem; }
+  td.forme { font-weight: bold; white-space: nowrap; }
+  td input, td select { width: 100%; font: inherit; font-size: .95rem; padding: 4px 6px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--text); }
+  .hint { font-style: italic; color: var(--muted); }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Exercice 2 – À toi de chercher dans le Gaffiot !</h1>
+  <p class="sub">Verbes conjugués à la 3e personne du singulier (P3) : présent ou parfait de l'indicatif ?</p>
+
+  <section class="card search" aria-label="Recherche dans le Gaffiot">
+    <form id="gaffiot-form">
+      <input id="mot" type="search" placeholder="Tape un présent P1 : amo, video, mitto…" autocomplete="off" required>
+      <button type="submit">Chercher dans le Gaffiot</button>
+    </form>
+    <p>La recherche s'ouvre dans un nouvel onglet sur <a href="https://www.gaffiot.fr/" target="_blank" rel="noopener">gaffiot.fr</a>.</p>
+  </section>
+
+  <section class="card">
+    <strong>Consigne.</strong> Pour chaque forme, retrouve le verbe dans le Gaffiot, recopie ses temps primitifs
+    (présent P1, présent P2, infinitif, parfait P1, supin) et son sens, puis indique le temps et traduis.
+    <ul>
+      <li>Le Gaffiot classe les verbes au <strong>présent P1</strong> : remplace -at / -et / -it par -o, -eo ou -io (pugnat → pugno).</li>
+      <li>Si le mot n'existe pas, c'est sans doute un parfait au radical différent.</li>
+      <li><strong>Présent P3</strong> = présent P2 dont le -s devient -t (legis → legit) ; <strong>parfait P3</strong> = radical du parfait + -it.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>N°</th><th>Forme</th><th>Temps primitifs (Gaffiot)</th><th>Sens</th><th>Temps</th><th>Traduction</th></tr></thead>
+        <tbody id="lignes"></tbody>
+      </table>
+    </div>
+    <p class="hint">★ Le n° 14 admet deux analyses : lesquelles ?</p>
+    <p><strong>Coup de pouce</strong> – présents P1 à chercher pour les formes les plus difficiles (dans le désordre) :
+      <em>pono – do – curro – facio – rego – mitto – video</em></p>
+  </section>
+</main>
+<script>
+  const formes = ["laudavit","timet","misit","ducit","fecit","pugnat","vidit","tenet","rexit","dormit","dedit","posuit","cucurrit","venit"];
+  const tbody = document.getElementById("lignes");
+  formes.forEach((f, i) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML =
+      `<td>${i + 1}</td><td class="forme">${f}</td>` +
+      `<td><input aria-label="Temps primitifs de ${f}"></td>` +
+      `<td><input aria-label="Sens de ${f}"></td>` +
+      `<td><select aria-label="Temps de ${f}"><option value="">—</option><option>présent</option><option>parfait</option><option>les deux</option></select></td>` +
+      `<td><input aria-label="Traduction de ${f}"></td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById("gaffiot-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const mot = document.getElementById("mot").value.trim().toLowerCase();
+    if (mot) window.open("https://www.gaffiot.fr/#" + encodeURIComponent(mot), "_blank", "noopener");
+  });
+</script>
+</body>
+</html>
